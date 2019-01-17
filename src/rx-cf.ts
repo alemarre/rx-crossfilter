@@ -1,6 +1,6 @@
-import { Subject, Observable } from "rxjs";
-import { filter } from "rxjs/operators";
-import { Crossfilter, Dimension, NaturallyOrderedValue, Predicate, EventType } from "crossfilter2";
+import { Subject, Observable, pipe, OperatorFunction } from "rxjs";
+import { filter, scan, map, tap } from "rxjs/operators";
+import { Crossfilter, Dimension, NaturallyOrderedValue, Predicate, EventType, Group } from "crossfilter2";
 
 export class RxCrossfilter<T> {
   private cf: Crossfilter<T>;
@@ -25,29 +25,28 @@ export class RxCrossfilter<T> {
   }
 }
 
-// Observer : flux des filtres (en mode toogle)
-// Observable : les données de la dimension ont changé
-export class RxDimension<TValue extends NaturallyOrderedValue> {
-  exactFilters: TValue[];
-  rangeFilters: [TValue, TValue][];
-  functionFilters: [Predicate<TValue>];
-
-  constructor() {
-    // this._dimension = dimension;
-    // this._init();
-  }
-
-  filter(filter: TValue | [TValue, TValue] | [Predicate<TValue>]) {
-
-  }
-
-  _init() {
-
-  }
+export function toggleFilter<TValue extends NaturallyOrderedValue>() : OperatorFunction<TValue | [TValue, TValue], Predicate<TValue>> {
+  return pipe(
+    scan<TValue | [TValue, TValue], {[key: string]: Boolean}>((acc, one) => {
+      acc[one.toString()] = !(Boolean(acc[one.toString()]));
+      return acc;
+    }, {}),
+    map(acc => Object.keys(acc).filter(key => acc[key])),
+    map(filters => (val: TValue) => filters.indexOf(val.toString()) >= 0),
+  );
 }
 
-// Observable : les données du groupe ont changé
-export class RxGroup {
-  _init() {
-  }
+export function filterDimension<TValue extends NaturallyOrderedValue>(dimension: Dimension<any, TValue>) {
+  return tap<TValue | [TValue, TValue] | Predicate<TValue>>(val => dimension.filter(val));
 }
+
+export function groupTop<TValue>(group: Group<any, any, TValue>, k: number) {
+  return map(evt => group.top(k));
+}
+
+export function groupAll<TValue>(group: Group<any, any, TValue>) {
+  return map(evt => group.all());
+}
+
+
+

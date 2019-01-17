@@ -1,7 +1,7 @@
-import { of, bindCallback, Subject } from 'rxjs';
-import { map, tap, filter } from 'rxjs/operators';
+import { Observable, of, bindCallback, Subject, from, interval } from 'rxjs';
+import { map, tap, filter, zip } from 'rxjs/operators';
 import * as crossfilter from 'crossfilter2';
-import { RxCrossfilter } from './rx-cf';
+import { RxCrossfilter, filterDimension, toggleFilter, groupTop ,groupAll } from './rx-cf';
 
 interface Payment {
     date: string;
@@ -32,34 +32,50 @@ rxcf.filtered.subscribe(x => console.log(x));
 
 var paymentsByTotal = payments.dimension(d => d.total);
 
-paymentsByTotal.filter([100, 200]);
-
-// var paymentGroupsByTotal = paymentsByTotal.group(function(total) { return Math.floor(total / 100); });
-
 interface Group {
     total: number;
+    count: number;
 }
 
 var paymentsByType = payments.dimension(d => d.type);
-var paymentVolumeByType = paymentsByType.group<number,  Group>().reduce(
-    (p, v, nf) => {
-        p.total = p.total + v.total;
-        return p;
-    },
-    (p, v, nf) => {
-        p.total = p.total - v.total;
-        return p;
-    },
-    () => {
-        return {
-            total: 0
-        };
-    }
-);
-var topTypes = console.log(paymentVolumeByType.top(1)[0]);
-payments.add([{date: "2011-11-15T17:29:52Z", quantity: 1, total: 300, tip: 100, type: "visa", productIDs:["004"]}])
+var paymentVolumeByType = paymentsByType.group<number,  Group>()
+    .reduce(
+        (p, v, nf) => {
+            p.total += v.total;
+            p.count += 1;
+            return p;
+        },
+        (p, v, nf) => {
+            p.total -= v.total;
+            p.count -= 1;
+            return p;
+        },
+        () => {
+            return {
+                total: 0,
+                count: 0
+            };
+        }
+    )
+    .order(value => value.total)
 
-paymentsByTotal.filter(null);
+payments.add([{date: "2011-11-15T17:29:52Z", quantity: 1, total: 90, tip: 100, type: "visa", productIDs:["004"]}]);
 
-// var topTypes = console.log(paymentVolumeByType.top(1)[0]);
+let filterValues: number[] = [100, 200, 300, 200];
+let filterEvents = from(filterValues).pipe(zip(interval(500), (a, b) => a))
 
+filterEvents
+    .pipe(
+        tap(x => console.log('filter', x)),
+        toggleFilter(),
+        filterDimension(paymentsByTotal)
+    )
+    .subscribe();
+
+rxcf.filtered
+    .pipe(
+        // groupAll(paymentVolumeByType),
+        groupTop(paymentVolumeByType, 2),
+        tap(x => console.log(JSON.stringify(x)))
+    )
+    .subscribe();
