@@ -10,13 +10,15 @@
   "license": "ISC",
   "dependencies": {
     "crossfilter2": "^1.4.6",
-    "rxjs": "^6.3.3",
-    "webpack": "^4.28.1"
+    "rxjs": "^6.3.3"
   },
   "devDependencies": {
     "ts-loader": "^5.3.3",
     "typescript": "^3.2.2",
     "webpack-cli": "^3.2.1",
-    "webpack-dev-server": "^3.1.14"
+    "webpack-dev-server": "^3.1.14",
+    "@types/chart.js": "^2.7.42",
+    "chart.js": "^2.7.3",
+    "webpack": "^4.28.1"
   }
 }

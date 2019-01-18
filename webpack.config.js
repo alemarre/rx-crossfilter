@@ -1,8 +1,10 @@
 module.exports = {
-  entry: "./src/app.ts",
+  entry: {
+    chartjs: "./src/demo/app-chartjs.ts"
+  },
   mode: "development",
   output: {
-    filename: "./dist/bundle.js"
+    filename: './dist/[name].bundle.js'
   },
   module: {
     rules: [
@@ -21,12 +23,4 @@ module.exports = {
     compress: true,
     port: 9000
   }
-  // module: {
-  //     loaders: [
-  //         {
-  //             test: /\.js$/,
-  //             exclude: /node_modules/
-  //         }
-  //     ]
-  // }
 };
