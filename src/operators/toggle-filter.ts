@@ -18,7 +18,6 @@ export function toggleFilter<
     map(acc => Object.keys(acc).filter(key => acc[key])),
     map(filters => {
       // if filters is an empty array, remove all filters
-      console.log(filters);
       if (!filters) {
         return null;
       } else {

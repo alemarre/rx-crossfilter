@@ -1,14 +1,15 @@
 import { of, from } from "rxjs";
 import { toggleFilter } from "./toggle-filter";
 import { last } from "rxjs/operators";
+import { expect } from "chai";
 
 describe("toggle-filter", () => {
   it("should filter on a single value", done => {
     of("a")
       .pipe(toggleFilter())
       .subscribe(predicate => {
-        expect(predicate("a")).toBe(true);
-        expect(predicate("b")).toBe(false);
+        expect(predicate("a")).to.be.eq(true);
+        expect(predicate("b")).to.be.eq(false);
         done();
       });
   });
@@ -20,8 +21,8 @@ describe("toggle-filter", () => {
         last()
       )
       .subscribe(predicate => {
-        expect(predicate("a")).toBe(false);
-        expect(predicate("b")).toBe(false);
+        expect(predicate("a")).to.be.eq(false);
+        expect(predicate("b")).to.be.eq(false);
         done();
       });
   });
@@ -33,8 +34,8 @@ describe("toggle-filter", () => {
         last()
       )
       .subscribe(predicate => {
-        expect(predicate(1)).toBe(false);
-        expect(predicate(2)).toBe(true);
+        expect(predicate(1)).to.be.eq(false);
+        expect(predicate(2)).to.be.eq(true);
         done();
       });
   });

@@ -28,7 +28,7 @@ var config = {
   devtool: isProd ? 'hidden-source-map' : 'source-map',
   context: path.resolve('./src'),
   entry: {
-    app: './index.ts'
+    rxcf: './index.ts'
   },
   output: {
     path: path.resolve('./dist'),
