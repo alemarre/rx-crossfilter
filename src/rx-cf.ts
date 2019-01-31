@@ -1,5 +1,5 @@
 import { Subject, Observable, pipe, OperatorFunction } from "rxjs";
-import { filter, scan, map, tap, startWith } from "rxjs/operators";
+import { filter, map, tap, startWith } from "rxjs/operators";
 import {
   Crossfilter,
   Dimension,
