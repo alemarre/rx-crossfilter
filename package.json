@@ -1,5 +1,8 @@
 {
-  "author": "",
+  "license": "ISC",
+  "main": "src/index.ts",
+  "name": "rx-crossfilter",
+  "version": "0.0.1",
   "bundleDependencies": false,
   "deprecated": false,
   "description": "",
@@ -9,9 +12,12 @@
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
+    "@types/chart.js": "^2.7.43",
     "@types/jasmine": "^2.5.53",
     "awesome-typescript-loader": "^5.2.0",
     "chai": "^4.2.0",
+    "chart.js": "^2.7.3",
+    "copy-webpack-plugin": "^4.6.0",
     "cross-env": "^5.0.1",
     "css-loader": "^1.0.0",
     "ejs-loader": "^0.3.0",
@@ -33,23 +39,16 @@
     "webpack-cli": "^3.1.0",
     "webpack-dev-server": "^3.1.5"
   },
-  "directories": {
-    "test": "tests"
-  },
-  "license": "ISC",
-  "main": "src/index.ts",
-  "name": "rx-crossfilter",
   "scripts": {
     "build": "npm run build:prod",
     "build:dev": "webpack --mode development --config ./webpack.config.js --progress --color --display-error-details",
     "build:prod": "cross-env NODE_ENV=production webpack --mode production --config ./webpack.config.js  --progress  --color --display-error-details --bail",
-    "clean": "npm cache clear && rimraf -- dist",
+    "clean": "npx rimraf -- dist",
     "server": "npm run server:dev",
     "server:dev": "webpack-dev-server --mode development --config ./webpack.config.js --hot --inline --progress --watch --open",
-    "server:prod": "cross-env NODE_ENV=production webpack-dev-server  --mode production --config ./webpack.config.js --port 3000 --host 0.0.0.0 --hot --inline --progress  --watch --open --content-base dist/",
+    "server:prod": "cross-env NODE_ENV=production webpack-dev-server  --mode production --config ./webpack.config.js --port 3000 --host 0.0.0.0 --hot --inline --progress  --watch --open --content-base dist/demo/",
     "start": "npm run server:dev",
     "test": "npx mocha --require ts-node/register src/**/*.spec.ts",
     "test:watch": "npx mocha --require ts-node/register --watch-extensions ts --watch \"src/**/*.spec.ts\""
-  },
-  "version": "0.0.1"
+  }
 }
